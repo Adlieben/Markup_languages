@@ -1,0 +1,45 @@
+---
+title: "Exercise 1 or a quest for purpose"
+author: 
+  - name: Adam Maghout
+    orcid: 0009-0002-5241-0856
+    email: a.maghout@uu.nl
+    affiliations:
+      - name: Methodology & Statistics @ UU University
+date: 25 Sep 2024
+date-format: "D MMM YYYY"
+execute: 
+  echo: true
+editor: source
+format: 
+  revealjs:
+    embed-resources: true
+    progress: true
+    multiplex: true
+    transition: fade
+    slide-number: true
+    margin: 0.075
+    logo: "images/logo.png" 
+    toc: false
+    toc-depth: 1
+    toc-title: Outline
+    scrollable: true
+    reference-location: margin
+    footer: Adam Maghout @ UU
+---
+
+## Who am I?
+
+I am Adam Maghout, a student at the UU. My ORCID is 0009-0002-5241-0856.
+
+## What am I?
+
+A sentient being. My favourite equation is this one:
+
+$E = mc^2 + \text{AI}$
+
+This equation highlights the potential for AI to unlock new forms of energy, enhance scientific discoveries, and revolutionize various fields such as healthcare, transportation, and technology.
+
+## Want to know something more about me?
+
+I started learning guitar when I was five. But I nearly gave up at 13. Good thing I didn't because otherwise I wouldn't be a failing part-time musician now.
