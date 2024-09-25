@@ -1,0 +1,132 @@
+\documentclass[10pt, fullpage, a4paper, titlepage]{article}
+\usepackage[a4paper, margin=1in]{geometry}
+
+\usepackage{graphicx}  % Load graphicx for images
+\usepackage{latexsym}
+\usepackage{setspace}
+\usepackage{apalike}
+\usepackage{amssymb, amsmath, amsthm}
+\usepackage{bm}
+\usepackage{epstopdf}
+\usepackage[]{hyperref}
+\usepackage{booktabs}
+\usepackage{subfig} % For putting graphs beside each other
+
+\hypersetup{
+    pdftitle={LaTeX},
+    pdfauthor={Adam Maghout},
+    pdfsubject={cool stuff},
+    pdfkeywords={koala, chuck norris},
+    bookmarksnumbered=true,     
+    bookmarksopen=true,         
+    bookmarksopenlevel=1,       
+    colorlinks=true,            
+    pdfstartview=Fit,           
+    pdfpagemode=UseOutlines,      
+    pdfpagelayout=TwoPageRight
+}
+
+
+\font\myfont=cmr12 at 40pt
+\title{{\myfont LaTeX \\ \Large A lesson in anger management}}
+\author{Adam Maghout}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\section{Denial}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vitae quam neque. Sed semper erat vel risus elementum ultricies. Nulla facilisi. Praesent quis magna non justo vehicula pharetra ut at lorem. Donec interdum mi non purus vehicula, ut tempus magna eleifend. Vivamus ut felis, at ultricies metus. Nam cursus, risus non efficitur volutpat, erat libero convallis erat, id dignissim nisi velit sit amet velit.
+
+\subsection{An unrelated equation}
+
+\begin{equation}
+\begin{gathered}
+\alpha_m^A=(-1)^{\phi_m} \sqrt{a_m}, \quad \sigma_m^2 \sim \mathcal{U}(0.20,0.80), \\
+\phi_m \sim \operatorname{Ber}(0.5), \quad a_m \sim \mathcal{U}(0.04,0.64),
+\end{gathered}
+\end{equation}
+
+\section{Anger}
+
+Curabitur ut felis odio. Nulla facilisi. Nulla quis est a lorem dictum molestie. Sed vel massa eu lacus pretium tincidunt et ut odio. Integer sit amet neque in enim viverra auctor. Proin ac urna ut neque facilisis tincidunt. Morbi bibendum risus ac arcu rutrum, vel iaculis lectus vulputate. Duis dictum odio ac tincidunt rutrum. Nunc ut lectus ac tortor scelerisque luctus.
+
+\begin{figure}[!hb]
+  \centering
+  \subfloat[Histogram]{\includegraphics[width=0.4\textwidth]{Top left 2.png}\label{fig:f1}}
+  \hfill
+  \subfloat[Density plot]{\includegraphics[width=0.4\textwidth]{Top right 2.png}\label{fig:f2}}
+  \hfill
+  \subfloat[Strip plot]{\includegraphics[width=0.4\textwidth]{Bottom left 2.png}\label{fig:f3}}
+    \hfill
+  \subfloat[Box plot]{\includegraphics[width=0.4\textwidth]{Bottom right 2.png}\label{fig:f4}}
+  \caption{Different plots of the same data, sometimes transformed. No particular objective other than it being an exercise.}
+\end{figure}
+
+\section{Bargaining}
+
+Phasellus consequat nisi sed mauris placerat, non sollicitudin libero sollicitudin. Integer at ante volutpat, fringilla orci at, tincidunt urna. Vivamus fermentum arcu sed vehicula feugiat. Nunc varius scelerisque libero ac interdum. Aenean et diam suscipit, congue dolor sit amet, feugiat lectus. Mauris accumsan urna nec elit malesuada, quis ultricies neque tempor. Integer fermentum arcu a leo scelerisque, non ultricies libero vestibulum.
+
+\begin{table}[!hb]
+\centering
+\caption{The same data, but now in a table. Only the first nine rows are displayed.}
+\begin{tabular}{lcccc}
+\toprule
+ & data & squared1 & squared2 & exponent \\
+ \midrule
+1 & -0.56 & 0.31 & 0.31 & 0.57 \\
+2 & -0.23 & 0.05 & 0.05 & 0.79 \\
+3 & 1.56 & 2.43 & 2.43 & 4.75 \\
+4 & 0.07 & 0.00 & 0.00 & 1.07 \\
+5 & 0.13 & 0.02 & 0.02 & 1.14 \\
+6 & 1.72 & 2.94 & 2.94 & 5.56 \\
+7 & 0.46 & 0.21 & 0.21 & 1.59 \\
+8 & -1.27 & 1.60 & 1.60 & 0.28 \\
+9 & -0.69 & 0.47 & 0.47 & 0.50 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Depression}
+
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vivamus quis massa velit. Proin ut sem velit. Cras egestas nunc in nulla volutpat, non facilisis dui convallis. Nulla non nunc nec neque cursus convallis. In eget ligula id magna dignissim fermentum vel at metus. Integer in nunc purus. Quisque id erat id neque suscipit ullamcorper.
+
+\section{Acceptance}
+
+Integer dictum orci nec tortor auctor volutpat. Vestibulum viverra felis quis tortor interdum tristique. Aliquam erat volutpat. Aenean ut arcu sed urna ultricies laoreet. Etiam eget odio felis. Sed finibus libero orci, ut suscipit felis cursus nec. Nam mollis turpis vel ex pharetra, id auctor nisl luctus. Phasellus id semper libero.
+
+\section{A fairy tale}
+
+The Enchanted Garden and the Luminous Dove
+\\~\\
+Once, in a land covered by mists and whispers, there lay an enchanting garden hidden behind a great stone wall. No one knew who had built the wall or why, but one thing was for certain – nobody had ever seen what was behind it.
+\\~\\
+A little girl named Clara lived in a village nearby. Fueled by curiosity and tales of magical creatures, she often dreamt of the wonders that the walled garden might hold. One day, unable to resist its lure any longer, she decided to find a way in.
+\\~\\
+As she approached the towering stone barrier, she noticed a tiny gap just big enough for her to peek through. The garden inside was bathed in a shimmering golden light, unlike any she had ever seen. To her amazement, in the center stood a magnificent tree with leaves that glittered as if they were made of starlight. And resting on one of its branches was a dove, glowing with the same luminous hue.
+\\~\\
+Before she could process this beautiful sight, the dove spoke to her in a voice as soft as the wind, "To enter the garden, one must share a pure and selfless desire."
+\\~\\
+Clara, with her heart pounding, whispered her wish, "I wish for everyone in my village to be happy and free from suffering."
+\\~\\
+The massive stone door, seemingly of its own accord, began to open. The luminous dove flew to Clara and rested on her shoulder. "Your wish is genuine, and so you may enter," it said.
+\\~\\
+Inside, the garden was more wondrous than Clara had ever imagined. Flowers sang in soft harmonies, and a gentle breeze carried the sweetest of fragrances. Every step she took made the grass shimmer with colors she'd never seen before.
+\\~\\
+The dove explained that this was an Enchanted Garden, a place where one’s purest wishes could come true. But, there was a catch. To make her wish a reality, Clara had to plant a seed from the magical tree in her village and care for it with unwavering love and dedication.
+\\~\\
+Clara accepted the challenge. With the seed safely tucked in her pocket and the dove guiding her, she returned to her village.
+\\~\\
+Years went by, and with Clara's love, the seed grew into a magnificent tree, similar to the one in the Enchanted Garden. With its growth, joy and happiness blossomed in the village like never before.
+\\~\\
+Clara's selfless wish not only transformed her village but also changed her. She became known as the Keeper of Joy, teaching future generations about love, compassion, and the magic of selfless wishes.
+\\~\\
+And so, in a village once shadowed by mystery, there stood a tree that bore witness to the pure heart of a girl and her luminous companion, reminding everyone that magic was always just a wish away.
+
+\end{document}
