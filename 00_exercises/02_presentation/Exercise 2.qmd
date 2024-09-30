@@ -1,0 +1,125 @@
+---
+title: "Purchasing the right guitar"
+author: 
+  - name: Adam Maghout
+    orcid: 0009-0002-5241-0856
+    email: a.maghout@uu.nl
+    affiliations:
+      - name: Methodology & Statistics @ UU University
+date: 25 Sep 2024
+date-format: "D MMM YYYY"
+execute: 
+  echo: true
+editor: source
+format: 
+  revealjs:
+    embed-resources: true
+    progress: true
+    multiplex: true
+    transition: fade
+    slide-number: true
+    margin: 0.075
+    logo: "images/logo.png" 
+    toc: false
+    toc-depth: 1
+    toc-title: Outline
+    scrollable: true
+    reference-location: margin
+    footer: Adam Maghout @ UU
+---
+
+## Data used
+
+To measure which genres are popular to play, we will analyse a dataset concerning Rolling Stone's 500 Greatest Albums of All Time from 2012. This list is revised every decade so a newer list is available but has not been generously turned into a manipulable dataset and published on data.world like the 2012 list.
+
+We must first load this dataset into R, which can be executed silently. We will also load useful packages at the same time.
+
+```{r loading, include=F}
+library(tidyverse)
+library(shiny)
+library(DT)
+library(forcats) # For ordering
+RollingStone <- read.csv('albumlist.csv')
+```
+
+![](images/RollingStone.png){fig-align="center" width="436"}
+
+## Exploring the data
+
+There is a variety of subgenres present in the loaded dataset. In a first time, it might be interesting to simply explore how songs were classified. Since these were added to the dataset using a python package, this will also help identify potential misclassifications.
+
+```{r setup, include=FALSE}
+# Function to generate a dropdown menu and render a filtered table
+create_filtered_table <- function(dataset, genre_column = "Genre") {
+  dt <- datatable(dataset, 
+                  filter = 'top', 
+                  options = list(pageLength = 5, dom = 't', 
+                                 initComplete = JS(
+                                   "function(settings, json) {
+                                      $(this.api().table().container()).css({'font-size': '10px'});
+                                   }")
+                  ), 
+                  rownames = FALSE)
+  
+  # Use onRender to create a dropdown menu for the genre filter
+  dt %>%
+    htmlwidgets::onRender("
+      function(el, x) {
+        var select = $('<select id=\"genreFilter\"><option value=\"\">All Subgenres</option></select>')
+          .appendTo($('#datatable-filter'))
+          .on('change', function() {
+            var val = $.fn.dataTable.util.escapeRegex($(this).val());
+            $('#example').DataTable().column(1).search(val ? '^' + val + '$' : '', true, false).draw();
+          });
+
+        var columnData = $('#example').DataTable().column(1).data().unique().sort();
+        columnData.each(function(d) {
+          select.append('<option value=\"' + d + '\">' + d + '</option>')
+        });
+      }
+    ")
+}
+```
+
+```{r table interactive, echo=F}
+# Create and display the interactive table with a genre filter
+create_filtered_table(RollingStone)
+```
+
+## Which genre is the most popular?
+
+There appears to be issues with some of the songs not being given any genre. Nevertheless, we can still visualise the most represented genres:
+
+```{r histogram, echo=F, cache=T}
+# Count the occurrences of each genre and select the top 5
+top_genres <- RollingStone %>%
+  count(Genre, sort = TRUE) %>%
+  top_n(5, n) %>%
+  pull(Genre)
+
+# Filter the dataset to include only the top 5 genres
+RollingStone_top5 <- RollingStone %>%
+  filter(Genre %in% top_genres)
+
+# Create a bar plot showing only the top 5 genres
+ggplot(RollingStone_top5, aes(x = fct_infreq(Genre))) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Top 5 Genres by Number of Occurrences in the Top 500", 
+       x = "Genre",
+       y = "Count")
+```
+
+## What about specific artists or gender?
+
+There aren't many repeat artists in the data, and gender is not given so not much can be done here without a larger and more detailed dataset. The code in R for obtaining counts for artists and gender in such a situation is however presented out of interest.
+
+
+```{r counts, eval=F}
+#| code-line-numbers: "|1-2|4-5|" # To highlight lines
+
+artist_counts <- RollingStone %>%
+  count(Artist, sort = TRUE)
+  
+gender_counts <- RollingStone %>%
+  count(Gender, sort = TRUE)
+```
