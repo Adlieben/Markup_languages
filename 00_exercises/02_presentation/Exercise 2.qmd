@@ -1,5 +1,5 @@
 ---
-title: "Purchasing the right guitar"
+title: "Purchasing your first guitar"
 author: 
   - name: Adam Maghout
     orcid: 0009-0002-5241-0856
@@ -26,7 +26,91 @@ format:
     scrollable: true
     reference-location: margin
     footer: Adam Maghout @ UU
+    preview-links: true
 ---
+
+## Getting into guitar
+
+So you've done it. You've finally decided to start playing guitar after years of telling yourself it was too difficult. But you're not alone. There are tons of resources online for you to embark on your guitar playing journey. Check out some of these awesome websites where you can find tabs and other useful tips and tricks.
+
+-   [Ultimate Guitars](https://www.ultimate-guitar.com/)
+-   [JustinGuitar](https://www.justinguitar.com/)
+-   [Marty Music](https://www.youtube.com/@MartyMusic)
+
+## Which Guitar Should I Start Playing?
+
+Simply put, there are three main types of guitars: classical, acoustic, and electric. Choosing which one to start with really depends on what you'll be wanting to play. They are all very similar though, so if you know how to play on one, you'll definitely be able to play on the other two.
+
+```{r create_audio, echo=FALSE}
+# Load necessary libraries
+library(htmltools)
+
+# Create and render the audio players with inline CSS and dynamic GIF switching
+create_audio_players <- function() {
+  tagList(
+    # GIF container at the top, centered
+    div(id = "guitar-image-container", style = "text-align: center; margin-bottom: 20px;",
+        img(src = "images/GuitarStatic.jpg", id = "guitar-image",
+            style = "display: block; width:200px;height:auto; margin: 0 auto;")
+    ),
+    
+    # Container for the audio players below the GIF
+    div(style = "display: flex; justify-content: space-around; margin-top: 20px;",
+        
+        # Classical Guitar audio player
+        div(style = "flex: 1; text-align: center;",
+            h3("Classical Guitar", style = "font-size: 18px; font-weight: normal;"),
+            tags$audio(id = "classical-audio", controls = TRUE, 
+                       tags$source(src = "sounds/Classical.mp3", type = "audio/mp3"))
+        ),
+        
+        # Acoustic Guitar audio player
+        div(style = "flex: 1; text-align: center;",
+            h3("Acoustic Guitar", style = "font-size: 18px; font-weight: normal;"),
+            tags$audio(id = "acoustic-audio", controls = TRUE, 
+                       tags$source(src = "sounds/Acoustic.mp3", type = "audio/mp3"))
+        ),
+        
+        # Electric Guitar audio player
+        div(style = "flex: 1; text-align: center;",
+            h3("Electric Guitar", style = "font-size: 18px; font-weight: normal;"),
+            tags$audio(id = "electric-audio", controls = TRUE, 
+                       tags$source(src = "sounds/Electric.mp3", type = "audio/mp3"))
+        )
+    ),
+    
+    # JavaScript to switch between static image and GIF based on audio playback
+    tags$script(HTML("
+      document.addEventListener('DOMContentLoaded', function() {
+        var classicalAudio = document.getElementById('classical-audio');
+        var acousticAudio = document.getElementById('acoustic-audio');
+        var electricAudio = document.getElementById('electric-audio');
+        var guitarImage = document.getElementById('guitar-image');
+        
+        function playGif() {
+          guitarImage.src = 'images/Guitar.gif';  // Switch to GIF
+        }
+
+        function showStaticImage() {
+          guitarImage.src = 'images/GuitarStatic.jpg';  // Switch back to static image
+        }
+
+        // Attach event listeners to all audio elements
+        [classicalAudio, acousticAudio, electricAudio].forEach(function(audio) {
+          audio.addEventListener('play', playGif);  // Show GIF when audio starts
+          audio.addEventListener('pause', showStaticImage); // Show static image when paused
+          audio.addEventListener('ended', showStaticImage); // Show static image when audio ends
+        });
+      });
+    "))
+  )
+}
+
+# Render the audio players and dynamic image switching
+create_audio_players()
+```
+
+# Ideas for music to play
 
 ## Data used
 
@@ -112,7 +196,6 @@ ggplot(RollingStone_top5, aes(x = fct_infreq(Genre))) +
 ## What about specific artists or gender?
 
 There aren't many repeat artists in the data, and gender is not given so not much can be done here without a larger and more detailed dataset. The code in R for obtaining counts for artists and gender in such a situation is however presented out of interest.
-
 
 ```{r counts, eval=F}
 #| code-line-numbers: "|1-2|4-5|" # To highlight lines
