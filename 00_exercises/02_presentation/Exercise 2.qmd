@@ -114,76 +114,80 @@ create_audio_players()
 ## Pros and cons
 
 <!-- Manually include Font Awesome from CDN -->
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
 
-::: {.columns}
+<head><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></head>
 
-:::: {.column width="50%"}
+::: columns
+::: {.column width="50%"}
 ### Acoustic guitar
 
 <i class="fa-solid fa-thumbs-up" style="color: green; font-size: 1em;"></i>
 
-<div style="font-size: 0.4em;">
-- Easy to play anywhere, don't need any additional set-up
-- Fuller sound so better to play on its own
-- Better for percussion depending on the wood
-- Cheap guitars will generally sound good if you know how to play
-</div>
+::: {style="font-size: 0.4em;"}
+-   Easy to play anywhere, don't need any additional set-up
+-   Fuller sound so better to play on its own
+-   Better for percussion depending on the wood
+-   Cheap guitars will generally sound good if you know how to play
+:::
 
 <i class="fa-solid fa-thumbs-down" style="color: red; font-size: 1em;"></i>
 
-<div style="font-size: 0.4em;">
-- Difficult to play softly so no rehearsing at night
-- Neck is larger and strings are thicker, making it harder to learn
-- Less flexibility in terms of sound
-- More precision is needed to sound good, little wiggle room for error
-</div>
+::: {style="font-size: 0.4em;"}
+-   Difficult to play softly so no rehearsing at night
+-   Neck is larger and strings are thicker, making it harder to learn
+-   Less flexibility in terms of sound
+-   More precision is needed to sound good, little wiggle room for error
+:::
+:::
 
-::::
-
-:::: {.column width="50%"}
+::: {.column width="50%"}
 ### Electric guitar
 
 <i class="fa-solid fa-thumbs-up" style="color: green; font-size: 1em;"></i>
 
-<div style="font-size: 0.4em;">
-- Great for solos, allows for a lot of effects like artificial bends and distortion
-- Strings are lighter and nicer to play
-- Neck is narrow so ideal for smaller hands
-- More options in terms of design: V-neck, stratocaster...
-- Can be played through headphones so as to not annoy your neighbours
-</div>
+::: {style="font-size: 0.4em;"}
+-   Great for solos, allows for a lot of effects like artificial bends and distortion
+-   Strings are lighter and nicer to play
+-   Neck is narrow so ideal for smaller hands
+-   More options in terms of design: V-neck, stratocaster...
+-   Can be played through headphones so as to not annoy your neighbours
+:::
 
 <i class="fa-solid fa-thumbs-down" style="color: red; font-size: 1em;"></i>
 
-<div style="font-size: 0.4em;">
-- Good guitars are more expensive, in addition to the cost of the amp
-- Guitars can get quite heavy, depending on the number of pickups
-- Tone is less warm and full than an acoustic guitar
-- More equipment is necessary to play so can become cumbersome
-</div>
-
-::::
-
+::: {style="font-size: 0.4em;"}
+-   Good guitars are more expensive, in addition to the cost of the amp
+-   Guitars can get quite heavy, depending on the number of pickups
+-   Tone is less warm and full than an acoustic guitar
+-   More equipment is necessary to play so can become cumbersome
 :::
+:::
+:::
+
+## What are other people playing?
+
+::: {layout="[[-1], [1], [-1]]"}
+![](images/Musicdivide.PNG){fig-align="center" width="500"}
+:::
+
+::: {style="text-align: center;"}
+@gyimesi2022thesis
+:::
+
 
 ## Ultimately, it doesn't matter ...
 
-<div style="font-size: 50%; padding: 10px;">
+::: {style="font-size: 50%; padding: 10px;"}
 You should only start playing if you really want to. Playing guitar shouldn't be a chore but something you look forward to when you come back from a long day of work. So pick the guitar that's right for you!
-</div>
+:::
 
-<div style="text-align: center;">
-<a href="https://www.instagram.com/oliverwoodmusic/reel/C77Ed7gOCOb/" target="_blank">
-    <img src="images/Oliver Wood.png" alt="Oliver Wood" style="width: 50%;"/>
-</a>
-</div>
+::: {style="text-align: center;"}
+<a href="https://www.instagram.com/oliverwoodmusic/reel/C77Ed7gOCOb/" target="_blank"> <img src="images/Oliver Wood.png" alt="Oliver Wood" style="width: 50%;"/> </a>
+:::
 
-<div style="max-height: 300px; overflow-y: auto; font-size: 50%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+::: {style="max-height: 300px; overflow-y: auto; font-size: 50%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"}
 "They are effectively demystifying what it means to be an artist. They are showing that the guitar is not necessarily an intimidating instrument for virtuosos—it’s a means of expressing yourself." @MolendaMichael2019WWSt
-</div>
+:::
 
 # Ideas for music to play
 
@@ -282,16 +286,16 @@ gender_counts <- RollingStone %>%
   count(Gender, sort = TRUE)
 ```
 
-
 ## Conclusion
 
 Put in the effort and time and learning the guitar can be very rewarding.
 
+```{=tex}
 \begin{align*}
 10,000 \text{ hours} &= \text{Rehearsing} + \text{Motivation} \\
                      &\Rightarrow \text{Proficiency}
 \end{align*}
-
+```
 The sky is the limit!
 
 ## References
