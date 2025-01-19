@@ -10,12 +10,16 @@ date: "2025-01-19"
 execute: 
   echo: true
 editor: source
-format: pdf
+format:
+  pdf:
+    css: styles.css
+bibliography: bibliography.bib
+csl: apa.csl
 ---
 
 #  Introduction
 
-```{r, echo=FALSE, message=F, warning=F}
+```{r libraries, echo=F, message=F, warning=F}
 # Load required libraries
 Sys.setenv(LANG = "en")
 library(MASS)
@@ -32,23 +36,27 @@ library(forcats) # For missing data
 library(knitr)
 
 # Load custom functions
-source('Scripts\Testing codes functions.R')
+source('Scripts/Testing codes functions.R')
 ```
 
 ## Background
 
-Kaggle competition and rising of prices
+As house prices skyrocket due to inflation and overpopulation in urban areas [@godaAbsoluteIncomeInequality2020], keeping them in a check is a priority for local governments [@dawkinsUrbanContainmentPolicies2002]. Conversely, from a landowner's perspective, the recent surge in demand carries with it the promise of making large returns on property investments [@banoLandlordsHowSolve2024]. Knowing what increases the value of a property thus constitutes an important discussion point for government bodies and private investors alike. Is the construction of a pool going to increase the value significantly more than expanding a house into its garden for instance? Often what customers and renters look for most is not reflected in the price of a property, so the driving force behind prices is hidden to landowners [@tuzovicKeyDeterminantsReal2009]. Furthermore, as the value fluctuates with time, it is crucial to devise models to predict how assets will affect property valuations.
+
+Several machine learning (ML) techniques have been applied in the field of real estate. These include random forests (RF), support vector machines (SVM) and gradient boosting machine (GBM). Ho et al. [-@hoPredictingPropertyPrices2021], for instance, found RF and GBM models to perform better at predicting prices over time, whilst SVM models produced reasonably accurate predictions within a tight time constraint. Calainho et al. [-@calainhoMachineLearningApproach2024], provided further support for the use of ML techniques as they performed better than linear models in their study investigating commercial real estate transactions in New York.
+
+The current research is done as part of a [Kaggle competition](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/overview). The competition makes use of the [Ames Housing Dataset](https://www.kaggle.com/datasets/shashanknecrothapa/ames-housing-dataset), which was first presented in 2011 as an alternative to the Boston Housing Dataset, a then-popular dataset for training models in the field of machine learning and data analysis [@decockAmesIowaAlternative2011]. It contains various features and attributes of residential homes in Ames, Iowa, USA. In line with other studies cited above, the objective of this research is to present an overview of various ML techniques for predicting property value.
 
 ## Problem
 
 ::: {column=6}
 
-This project aims to predict house prices for a test dataset using various variables relating to the size of the house, its type as well as other property-related variables. The target variable is called 'SalePrice'. Performance is measured using the Root-Mean-Squared-Error (RMSE) between the logarithm of the predicted value and the logarithm of the observed sales price.
+This project aims to predict house prices for a test dataset using various variables relating to the size of the house, its type as well as other property-related variables. The target variable is called 'SalePrice', corresponding to the value of the house if it were to be sold. Performance is measured using the Root-Mean-Squared-Error (RMSE) between the logarithm of the predicted value and the logarithm of the observed sales price. The aim is to minimise the RMSE, indicating a good prediction model has been reached using the available variables. This is in correspondance with the rules set out by the Kaggle competition. Additionally, researchers are not given access to the test data and can only evaluate the performance of their model by submitting the resulting predicted property prices through the Kaggle website, after which the RMSE on the test data is given and a ranking is assigned to the researcher's submission. As the number of permitted submissions is not limited, it is also entirely possible to approach the problem without a model and just adjust predictions after each submission until the RMSE is lowered (although this is cumbersome).
 
 :::
 
 ::: {column=6}
-![](Images/house.jpg){width=50%}
+![](Images/house.jpg){width=50% fig-align="center"}
 :::
 
 ## Data Description
@@ -405,3 +413,9 @@ The following considerations were made regarding model selection:
 - Cross-validation on the training data ensures the solution is not overly fitted but does not fully capture overall performance (even at 10 folds).
 - Several model selection decisions are arbitrary, such as the lower bound selection and the number of folds.
 :::
+
+{{< pagebreak >}}
+
+## Bibliography
+
+
