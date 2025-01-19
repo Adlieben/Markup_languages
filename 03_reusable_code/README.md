@@ -7,4 +7,4 @@ Deliverable 3: Reusable `R` code wrapped in an `R` package or `Shiny` app.
 
 See course manual for requirements.
 
-I have opted for an `R` package, the website for which can be found [here](https://adlieben.github.io/academicRules/index.html) and the development repository [here](https://github.com/Adlieben/academicRules/tree/v1.0.0). As of 19/01/2025, zenodo is returning an error when seeking to publish anything so the package is unpublished.
+I have opted for an `R` package, the website for which can be found [here](https://adlieben.github.io/academicRules/index.html) and the development repository [here](https://github.com/Adlieben/academicRules/tree/v1.0.0). As of 19/01/2025, zenodo is returning an error when seeking to publish anything so the package is unpublished. I have however succesfully published the [roundR package](https://github.com/Adlieben/roundR) for week 6 so the issue stems from the website.
