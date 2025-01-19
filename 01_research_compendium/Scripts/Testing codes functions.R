@@ -63,13 +63,14 @@ cross_validate_rmse <- function(data, target, folds = 2, methods = c('linear', '
             trainset[[var]] <- factor(ifelse(trainset[[var]] == combined_name | trainset[[var]] == next_level, 
                                              new_combined_name, 
                                              as.character(trainset[[var]])))
-          }
+          
           
           testset[[var]] <- factor(ifelse(testset[[var]] %in% low_freq_levels | testset[[var]] == next_level, 
                                           new_combined_name, 
                                           as.character(testset[[var]])), 
                                    levels = c(levels(testset[[var]]), new_combined_name))
           testset[[var]] <- droplevels(testset[[var]])
+          }
         }
         
         if (length(unique(trainset[[var]])) < 2 | !all(levels(testset[[var]]) %in% levels(trainset[[var]]))) {
