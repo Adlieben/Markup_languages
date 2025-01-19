@@ -438,7 +438,7 @@ test_zero$Predicted_SalePrice <- predict(svm_model, newdata = test_zero)
 # Prepare the submission file
 submission <- data.frame(Id = test$Id, 
                          SalePrice = test_zero$Predicted_SalePrice)
-write.csv(submission, file = "submission_Adam_Maghout.csv", row.names = FALSE)
+write.csv(submission, file = "Results/submission_Adam_Maghout.csv", row.names = FALSE)
 ```
 
 This returns an RMSE of 0.12359, which positions the model in the 540th place on the leaderboard.
