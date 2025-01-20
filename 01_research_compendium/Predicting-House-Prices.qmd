@@ -53,7 +53,7 @@ The current research is done as part of a [Kaggle competition](https://www.kaggl
 
 ::: {column=6}
 
-This project aims to predict house prices for a test dataset using various variables relating to the size of the house, its type as well as other property-related variables. The target variable is called 'SalePrice', corresponding to the value of the house if it were to be sold. Performance is measured using the Root-Mean-Squared-Error (RMSE) between the logarithm of the predicted value and the logarithm of the observed sales price. The aim is to minimise the RMSE, indicating a good prediction model has been reached using the available variables. This is in correspondance with the rules set out by the Kaggle competition. Additionally, researchers are not given access to the test data and can only evaluate the performance of their model by submitting the resulting predicted property prices through the Kaggle website, after which the RMSE on the test data is given and a ranking is assigned to the researcher's submission. As the number of permitted submissions is not limited, it is also entirely possible to approach the problem without a model and just adjust predictions after each submission until the RMSE is lowered (although this is cumbersome).
+This project aims to predict house prices for a test dataset using various variables relating to the size of the house, its type as well as other property-related variables. The target variable is `SalePrice`, corresponding to the value of the house in dollars if it were to be sold. Performance is measured using the Root-Mean-Squared-Error (RMSE) between the logarithm of the predicted value and the logarithm of the observed sales price. The aim is to minimise the RMSE, indicating a good prediction model has been reached using the available variables. This is in correspondance with the rules set out by the Kaggle competition. Additionally, researchers are not given access to the test data and can only evaluate the performance of their model by submitting the resulting predicted property prices through the Kaggle website, after which the RMSE on the test data is given and a ranking is assigned to the researcher's submission. As the number of permitted submissions is not limited, it is also entirely possible to approach the problem without a model and just adjust predictions after each submission until the RMSE is lowered (although this is cumbersome).
 
 :::
 
@@ -83,37 +83,24 @@ print(paste0('Range of prices observed: ', min(train$SalePrice),
 
 ##  Data Cleaning
 
-###  Convert Characters to Factors
+Before running any models, an adjusted version of the data is obtained to ensure results are correct. The categorical variables in the dataset need to be converted to factors so as to be handled correctly by the ML models. Furthermore, some of the variables are total variables, that is, they are the sum of two or more other variables. This is the case for `TotalBsmtSF` and `GrLivArea` which are respectively the aggregated totals of the basement and general living area square footage. We remove them from the dataset used for prediction, as well as the house `Id` which cannot be used for prediction. No other variables are perfectly correlated with each other, yielding a total number of predictive variables equal to $81-3-1=77$ (since `SalePrice` is the outcome variable).
 
-Many variables in this dataset are categorical, which we handle by converting character columns to factors for proper analysis and model fitting.
-
-```{r data cleaning 1}
+```{r data cleaning, echo=F}
+#  Convert Characters to Factors
 train <- train %>% mutate(across(where(is.character), as.factor))
 test <- test %>% mutate(across(where(is.character), as.factor))
-```
 
-:::{.incremental}
-
-###  Handling Multicollinearity
-
-Some of the variables are total variables, that is, they are the sum of two others. This is the case for variables TotalBsmtSF and GrLivArea. We remove them from the dataset used for prediction, as well as the ID column
-
-```{r data cleaning 2}
+# Handling multicollinearity
+# (on a separate dataset so Id is still linkable if necessary)
 train_clean <- train %>% select(-c(Id, BsmtUnfSF, GrLivArea))
 test_clean <- test %>% select(-c(Id, BsmtUnfSF, GrLivArea))
 ```
-
-:::
 
 #  Missing Data
 
 ##  Rationale
 
-Given the presence of missing data in both the training and test datasets, identifying an imputation method that works on the training dataset should also improve predictions on the test dataset.
-
-##  Relevant Variables with Missing Data
-
-Missing values in the training set:
+Given the presence of missing data in both the training and test datasets, identifying an imputation method that works on the training data should also improve predictions on the test data. Many variables in the training dataset have missing values. These are given by:
 
 ```{r missing data, echo=F}
 # Calculate missing data per variable
@@ -141,13 +128,13 @@ train_nomissing <- train %>% select(-c(Id, LotFrontage, Alley, MasVnrType, MasVn
                                        BsmtUnfSF, GrLivArea))
 ```
 
-Variables with missing data often represent features that do not apply to all houses. For instance, `GarageType` and `GarageYrBlt` are likely missing for houses without garages.
+Variables with missing data appear to represent features that do not apply to all houses. For instance, `GarageType` (the type of garage) and `GarageYrBlt` (the year of construction of the garage) are likely missing for houses without garages, whilst `PoolQC` (pool quality) can obviously not be measured for houses without a pool. As such, it can be assumed that no real missing data is present, which is a reasonable assumption given the data is provided in the context of a programming competition.
 
 ##  Dealing with Missing Data
 
-We replace missing values with 0 (for numeric variables) or "none" (for categorical variables). This is done in separate datasets to measure the impact of the imputation procedure.
+We replace missing values with 0 and "none" for numeric and categorical variables respectively. This appears to be consistent with the missing data pattern observed in the previous section, as the absence of a feature signifies it has no area and can thus not add value to a house. The imputation by these new values is done in a separate dataset to enable measuring the impact of the imputation procedure on the results.
 
-```{r deal with missing}
+```{r deal with missing, echo=F}
 # Replace missing values in numeric columns with 0 
 # and in factor columns with 'none'
 train_zero <- train_clean %>%
@@ -157,167 +144,112 @@ train_zero <- train_clean %>%
 test_zero <- test_clean %>%
   mutate(across(where(is.numeric), ~ ifelse(is.na(.), 0, .))) %>%
   mutate(across(where(is.factor), ~ fct_na_value_to_level(., "none")))
-
-# Check for missing data to confirm replacement
-missing_data_train <- sapply(train_zero, function(x) sum(is.na(x)))
-missing_data_test <- sapply(test_zero, function(x) sum(is.na(x)))
-any(missing_data_train != 0)
-any(missing_data_test != 0)
 ```
 
 #  Fitting a Model
 
-##  Options Formulated
+##  Models
 
 We evaluate several models to predict `SalePrice`:
 
-:::{.incremental}
 - Linear Regression
 - Quadratic Regression
-- Cubic Regression
-- Decision Tree Learning
 - Random Forests
 - Support Vector Machines (SVM)
-- Neural Networks (NN)
-:::
 
-Models are first compared with general parameters and then the parameters for candidate models are explored further.
+Models are first ran with generic parameters in a first round. In a second round, only promising candidate models are retained, for which the parameters are tuned. This has the disadvantage of potentially discarding models that would perform well with other settings. However, given the quantity of models considered, the parameter space is too large to visit for each model so this simplified two-step approach ensures the computational time is kept at a minimum. Furthermore, all models in R are constructed with default settings that can generally be assumed to have been chosen optimally by package developers.
 
-##  Intricacies of Methods
+Interactions between models, such as between a linear and cubic regression term, are left out in the first step, and only included in the second step if there is reasonable belief that this will improve prediction. Given that the models need to be run twice, on both the dataset with and without missing data, there are thus 8 models that need to be run in step 1. To ensure further stability and applicability of the results to the test data, cross-validation (CV) is used, with the number of folds varying from 1 to 10. The decision to only fine-tune parameters in a second step is thus largely justified. As household values are unlikely to be negative, negative predicted values are replaced for all models by a conservative lower bound of 10 000$. To facilitate running the models, a function is created and ran several times. The details of how each model is ran are provided here but the entire function can be found withing the Scripts folder.
 
-A lower bound of 10 000 is given to avoid issues with the RMSE of the likelihood.
-
-```{r intricacies 1, eval=F}
+```{r models, eval=F}
 if (method == 'linear') {
         model <- lm(predictors, data = trainset)
         testset$Predicted <- pmax(predict(model, newdata = testset), 10000)
         
-      } else if (method == 'quadratic') {
+} else if (method == 'quadratic') {
         model <- lm(predictors, data = trainset)
         testset$Predicted <- pmax(predict(model, newdata = testset), 10000)
         
-      } else if (method == 'cubic') {
-        model <- lm(predictors, data = trainset)
-        testset$Predicted <- pmax(predict(model, newdata = testset), 10000)
-        
-      } else if (method == 'tree') {
-        model <- rpart(predictors, data = trainset, method = "anova")
-        testset$Predicted <- pmax(predict(model, newdata = testset), 10000)
-        
-      } else if (method == 'rf') {
-        # Keep only variables with exact level matches
-        factor_vars_rf <- names(trainset)[sapply(trainset, is.factor)]
-        trainset_rf <- trainset # Avoid overwriting the data for other methods
-        testset_rf <- testset
-        
-        # Identify variables to drop if levels do not match exactly
-        vars_to_drop <- c()
-        
-        for (var in factor_vars_rf) {
-          # Check if the levels match exactly
-          if (!identical(levels(trainset[[var]]), levels(testset[[var]]))) {
-            vars_to_drop <- c(vars_to_drop, var)
-            # message(paste("Dropped variable", var, "from fold", i, 
-            # "for random forest due to mismatched levels")) 
-            # optional for tracking
-          }
-        }
-        
-        # Remove mismatched variables from trainset_rf and testset_rf
-        trainset_rf <- trainset_rf %>% select(-all_of(vars_to_drop))
-        testset_rf <- testset_rf %>% select(-all_of(vars_to_drop))
-        
-        # Align factor levels in testset_rf to match trainset_rf 
-        # for remaining factors
-        for (var in names(trainset_rf)[sapply(trainset_rf, is.factor)]) {
-          testset_rf[[var]] <- factor(testset_rf[[var]], 
-                                      levels = levels(trainset_rf[[var]]))
-        }
-        
-        # Fit the random forest model with consistent columns
+} else if (method == 'rf') {
         model <- randomForest(predictors, data = trainset_rf, ntree = 10000)
         testset$Predicted <- pmax(predict(model, newdata = testset_rf), 10)
         
-      } else if (method == 'svm') {
-          # Fit the SVM model based on specified kernel and type
+} else if (method == 'svm') {
           model <- svm(predictors, data = trainset, 
-                       kernel = svm_kernel, 
-                       type = svm_type)
+                       kernel = "radial", 
+                       type = "eps-regression")
           testset$Predicted <- pmax(predict(model, newdata = testset), 10000)
-        
-      } else if (method == 'nn') {
-        model <- nnet(predictors, data = trainset, size = 5, linout = TRUE,
-                      trace = FALSE)
-        testset$Predicted <- pmax(predict(model, newdata = testset), 10000)
-      }
+}
 ```
 
 ##  Intricacies of Methods
 
-```{r intricacies 2, eval=F}
-      factor_vars <- trainset %>% select(where(is.factor))
-      for (var in names(factor_vars)) {
-        # Get counts for each level in the training set
-        trainset[[var]] <- droplevels(trainset[[var]])
-        level_counts <- table(trainset[[var]])
+A hurdle when performing cross-validation on a dataset with a significant quantity of missing data is that often folds will not have the same number of levels for a categorical variable as in the whole dataset. This is an issue as levels that are present in the testing phase of a CV but not in the training phase will then posess no predictive attributes. This can be mitigated by combining levels in both the CV training and test sets (not to be confused with the overall training and test sets) such that they match for both groups. This reduces the precision of our models but is unfortunately necessary. The details of this procedure are given here.
+
+```{r intricacies, eval=F}
+factor_vars <- trainset %>% select(where(is.factor))
+for (var in names(factor_vars)) {
+  # Get counts for each level in the training set
+  trainset[[var]] <- droplevels(trainset[[var]])
+  level_counts <- table(trainset[[var]])
+  
+  # Identify levels with fewer than 2 observations
+  low_freq_levels <- names(level_counts[level_counts < 2])
+  
+  # If we have low-frequency levels, combine them
+  if (length(low_freq_levels) > 0) {
+    # Create a combined "Other" category with descriptive name
+    combined_name <- paste(low_freq_levels, collapse = "_")
+    trainset[[var]] <- factor(ifelse(trainset[[var]] %in%
+                                       low_freq_levels, combined_name,
+                                     as.character(trainset[[var]])))
+    
+    # Recount levels after initial collapse
+    level_counts <- table(trainset[[var]])
+    
+    # If the combined level still has only 1 observation, 
+    # try to merge with the next least common level
+    if (level_counts[combined_name] < 2) {
+      
+      # Find the next least common level, 
+      # only if there’s more than one unique level
+      sorted_levels <- names(sort(level_counts))
+      if (length(sorted_levels) > 1) {
+        next_level <- sorted_levels[2]  
         
-        # Identify levels with fewer than 2 observations
-        low_freq_levels <- names(level_counts[level_counts < 2])
-        
-        # If we have low-frequency levels, combine them
-        if (length(low_freq_levels) > 0) {
-          # Create a combined "Other" category with descriptive name
-          combined_name <- paste(low_freq_levels, collapse = "_")
-          trainset[[var]] <- factor(ifelse(trainset[[var]] %in%
-                                             low_freq_levels, combined_name,
-                                           as.character(trainset[[var]])))
-          
-          # Recount levels after initial collapse
-          level_counts <- table(trainset[[var]])
-          
-          # If the combined level still has only 1 observation, 
-          # try to merge with the next least common level
-          if (level_counts[combined_name] < 2) {
-            
-            # Find the next least common level, 
-            # only if there’s more than one unique level
-            sorted_levels <- names(sort(level_counts))
-            if (length(sorted_levels) > 1) {
-              next_level <- sorted_levels[2]  
-              
-              # Update the combined level to be merged with the next level
-              new_combined_name <- paste(combined_name, next_level, sep = "_")
-              trainset[[var]] <- factor(ifelse(trainset[[var]] == combined_name | 
-                                                 trainset[[var]] == next_level, 
-                                               new_combined_name, 
-                                               as.character(trainset[[var]])))
-            }
-          }
-          
-          # Apply the same transformation to the test set
-          testset[[var]] <- factor(ifelse(testset[[var]] %in% 
-                                            low_freq_levels | testset[[var]] 
-                                          == next_level, new_combined_name, 
-                                          as.character(testset[[var]])), 
-                                   levels = c(levels(testset[[var]]),
-                                              new_combined_name))
-          testset[[var]] <- droplevels(testset[[var]])
-        }
-        
-        # After collapsing, check if there are fewer than 2 unique levels
-        if (length(unique(trainset[[var]])) < 2 |
-            !all(levels(testset[[var]]) %in% levels(trainset[[var]]))) {
-          trainset <- trainset %>% select(-all_of(var))
-          testset <- testset %>% select(-all_of(var))
-        }
+        # Update the combined level to be merged with the next level
+        new_combined_name <- paste(combined_name, next_level, sep = "_")
+        trainset[[var]] <- factor(ifelse(trainset[[var]] == combined_name | 
+                                           trainset[[var]] == next_level, 
+                                         new_combined_name, 
+                                         as.character(trainset[[var]])))
       }
+    }
+    
+    # Apply the same transformation to the test set
+    testset[[var]] <- factor(ifelse(testset[[var]] %in% 
+                                      low_freq_levels | testset[[var]] 
+                                    == next_level, new_combined_name, 
+                                    as.character(testset[[var]])), 
+                             levels = c(levels(testset[[var]]),
+                                        new_combined_name))
+    testset[[var]] <- droplevels(testset[[var]])
+  }
+  
+  # After collapsing, check if there are fewer than 2 unique levels
+  if (length(unique(trainset[[var]])) < 2 |
+      !all(levels(testset[[var]]) %in% levels(trainset[[var]]))) {
+    trainset <- trainset %>% select(-all_of(var))
+    testset <- testset %>% select(-all_of(var))
+  }
+}
 ```
 
 ##  Performance during Cross-validation
 
-We apply cross-validation with various fold counts (2 to 10) to evaluate the RMSE across different model configurations.
+As specified above, we apply cross-validation with various fold counts (2 to 10) to evaluate the RMSE across the different model configurations.
 
-```{r cross-validation, cache=T}
+```{r cross-validation, cache=T, warning=F, echo=F}
 # Cross-validation setup
 folds_range <- 2:10
 methods <- c('linear', 'quadratic', 'rf', 'svm')
@@ -341,13 +273,13 @@ ggplot(results_all_0, aes(x = Folds, y = Mean_RMSE, color = Method)) +
        x = "Folds", y = "Mean RMSE")
 ```
 
-##  Models Selected
+Based on the graph, we select Random Forest and SVM as the best-performing models as they are the most stable across number of folds. We must however first compare performance with the model fitted on the whole data with imputed values.
 
-Based on the previous cross-validation, we selected Random Forest and SVM as the best-performing models. Linear and quadratic models are retained for interpretability. **We can now compare performance with the model fitted on the whole data with 'imputed' values**.
+##  Imputed Data Cross-validation
 
-##  On the Dataset with Zero'd Missing Data
+We run the cross-validation again, but this time with the missing data replaced.
 
-```{r zero missing 1, cache=T, warning=F, message=F}
+```{r zero missing, cache=T, warning=F, message=F, echo=F}
 # Cross-validation on zero-imputed data
 results_all <- data.frame(Folds = integer(), Method = character(), 
                           Mean_RMSE = numeric())
@@ -361,13 +293,12 @@ for (folds in folds_range) {
   }
 }
 
+# Plot
 ggplot(results_all, aes(x = Folds, y = Mean_RMSE, color = Method)) +
   geom_line() + geom_point() +
   labs(title = "RMSE per Model with Zero-Imputed Data", x = "Folds", 
        y = "Mean RMSE")
-```
 
-```{r zero missing 2, echo = F, cache=T}
 # Rename Mean_RMSE columns to differentiate between no-missing and zero-imputed results
 results_all_0 <- results_all_0 %>%
   rename(Mean_RMSE_no_missing = Mean_RMSE)
@@ -382,9 +313,11 @@ comparison_results <- merge(results_all_0, results_all, by = c("Folds", "Method"
 print(head(comparison_results))
 ```
 
+The difference in RMSE is minimal between the datasets with and without imputed data, indicating that the procedure defined earlier is justified. However, this may have been due to the number of variables with missing data being comparatively low. Nevertheless, SVM still appears to be the best model and can thus be perfected in the next step. As there is no obvious trend concerning whether the data should be imputed or not, the imputation procedure is retained as it makes substantive sense.
+
 ##  Choice of Parameters for SVM
 
-We compare different SVM kernels (linear, polynomial, radial, sigmoid) and regression types (eps and nu) to find the optimal configuration.
+We compare different SVM kernels (linear, polynomial, radial, sigmoid) and regression types (eps and nu) to find the optimal configuration. These are the only tunng parameters available for SVM models. For the previous step, the sigmoid kernel was used, alongside an eps regression so the aim is to ascertain whether this can be improved upon. 10-fold cross-validation is retained here for ensuring result stability.
 
 ```{r SVM parameter choice, cache=T}
 # SVM parameter options
@@ -423,7 +356,7 @@ ggplot(results_svm, aes(x = Kernel, y = Mean_RMSE,
        y = "Mean RMSE")
 ```
 
-The radial kernel with nu-regression achieved the best performance, so we select this configuration for final testing.
+The radial kernel with nu-regression achieved the best performance, so we select this configuration for final testing, whilst retaining the imputation procedure.
 
 ##  Performance on the Test Set
 
@@ -441,7 +374,7 @@ submission <- data.frame(Id = test$Id,
 write.csv(submission, file = "Results/submission_Adam_Maghout.csv", row.names = FALSE)
 ```
 
-This returns an RMSE of 0.12359, which positions the model in the 540th place on the leaderboard.
+This returns an RMSE of 0.12359 according to the Kaggle website, which positions the model in the 540th place on the leaderboard.
 
 ![](Images/Competition.png)
 
@@ -449,11 +382,9 @@ This returns an RMSE of 0.12359, which positions the model in the 540th place on
 
 The following considerations were made regarding model selection:
 
-:::{.incremental}
 - The model could have been run several times.
 - Cross-validation on the training data ensures the solution is not overly fitted but does not fully capture overall performance (even at 10 folds).
-- Several model selection decisions are arbitrary, such as the lower bound selection and the number of folds.
-:::
+- Several model selection decisions are arbitrary, such as the lower bound selection, the number of folds and the original tuning parameters used.
 
 {{< pagebreak >}}
 
